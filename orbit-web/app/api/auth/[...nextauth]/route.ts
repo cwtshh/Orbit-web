@@ -10,9 +10,10 @@ const nextAuthOptions: NextAuthOptions = {
                 username: { label: "username", type: "text" },
                 password: { label: "password", type: "password" }
             },
-            async authorize(credentials, req) {
+            async authorize(credentials) {
                 // console.log(credentials)
                 try {
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     const res: any = await axios.post(`http://localhost:3005/user/login`, {
                         username: credentials?.username,
                         password: credentials?.password
@@ -26,6 +27,7 @@ const nextAuthOptions: NextAuthOptions = {
                         profile_photo_path: res.data.user.profile_photo_path,
                         username: res.data.user.username,
                     };
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 } catch (error: any) {
                     console.log(error)
                     console.log(error.response)
@@ -35,18 +37,23 @@ const nextAuthOptions: NextAuthOptions = {
         })
     ],
     pages: {
-        signIn: '/',
+        signIn: '/login',
     },
     callbacks: {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         async jwt({token, user}: {token: any, user: any}) {
             if (user) {
                 token.user = user;
                 token.token = user.token;
             }
+
+            console.log(token)
             return token;
         },
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         async session({session, token}: {token: any, session: any}) {
             if (token?.user) {
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 session.user = token.user as any;
                 session.token = token.token as string;
               }
